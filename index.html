@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta charset="UTF-8">
+    <title>Torneo Completo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #121212;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 { text-transform: uppercase; color: #db9c14; text-shadow: 2px 2px 4px #000; }
+
+        /* --- CLASSIFICA --- */
+        .league-container { width: 100%; max-width: 900px; overflow-y: auto; max-height: 400px; margin-bottom: 50px; border: 1px solid #333; }
+        .league-table { width: 100%; border-collapse: collapse; background: rgba(255, 255, 255, 0.02); }
+        .league-table th, .league-table td { padding: 10px; border: 1px solid #333; text-align: center; }
+        .league-table th { background: rgba(252, 211, 3, 0.5); position: sticky; top: 0; }
+        
+        input[type="number"], .name-input {
+            background: #1a1a1a; border: 1px solid #444; color: white;
+            padding: 5px; border-radius: 4px; text-align: center; width: 80%;
+        }
+
+        /* --- TABELLONE (BRACKET) --- */
+        .bracket-container {
+            display: flex;
+            align-items: stretch;
+            gap: 30px;
+            padding: 40px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 15px;
+            overflow-x: auto;
+            width: 95%;
+        }
+
+        .round { display: flex; flex-direction: column; justify-content: space-around; gap: 15px; min-width: 160px; }
+
+        .match-box {
+            display: flex; flex-direction: column; gap: 5px;
+            padding: 8px; background: #1e1e1e;
+            border-left: 4px solid #db9c14; border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .round-title { font-size: 0.9rem; color: #db9c14; text-align: center; margin-bottom: 20px; text-transform: uppercase; font-weight: bold; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        
+        input[type="text"] { font-size: 0.85rem; }
+        .winner-box input { border: 2px solid #ffd700; color: #403f3d; font-weight: bold; font-size: 1rem; }
+
+        /* Estetica frecce/connessioni */
+        .connector { display: flex; align-items: center; color: #444; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+    <h2>1. Classifica</h2>
+    <div class="league-container">
+        <table class="league-table" id="rankTable">
+            <thead>
+                <tr>
+                    <th>Pos</th>
+                    <th>Giocatore</th>
+                    <th>Vinte (3pt)</th>
+                    <th>Pareggi (1pt)</th>
+                    <th>Sconfitte (0pt)</th>
+                    <th>Abbandono (-1pt)</th>
+                    <th>Vittoria T. (2pt)</th>
+                    <th>Partite</th>
+                    <th>Punti</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+             <tr class="player-row">
+                <td class="pos">1</td>
+                <td class="nome">Aallal</td>
+                <td><input type="number" value="0" class="win" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="draw" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="loss" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="quit" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="table" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="match"></td>
+                <td class="col-points">0</td>
+            </tr>
+            <tr class="player-row">
+                <td class="pos">2</td>
+                <td class="nome">Colombo</td>
+                <td><input type="number" value="0" class="win" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="draw" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="loss" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="quit" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="table" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="match"></td>
+                <td class="col-points">0</td>
+            </tr>
+            <tr class="player-row">
+                <td class="pos">3</td>
+                <td class="nome">Dipalma</td>
+                <td><input type="number" value="0" class="win" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="draw" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="loss" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="quit" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="table" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="match"></td>
+                <td class="col-points">0</td>
+            </tr>
+            <tr class="player-row">
+                <td class="pos">4</td>
+                <td class="nome">Gavioli</td>
+                <td><input type="number" value="0" class="win" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="draw" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="loss" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="quit" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="table" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="match"></td>
+                <td class="col-points">0</td>
+            </tr>
+            <tr class="player-row">
+                <td class="pos">5</td>
+                <td class="nome">Grillo</td>
+                <td><input type="number" value="0" class="win" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="draw" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="loss" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="quit" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="table" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="match"></td>
+                <td class="col-points">0</td>
+            </tr>
+            <tr class="player-row">
+                <td class="pos">6</td>
+                <td class="nome">Pogliana</td>
+                <td><input type="number" value="0" class="win" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="draw" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="loss" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="quit" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="table" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="match"></td>
+                <td class="col-points">0</td>
+            </tr>
+            <tr class="player-row">
+                <td class="pos">7</td>
+                <td class="nome">Pozzali</td>
+                <td><input type="number" value="0" class="win" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="draw" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="loss" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="quit" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="table" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="match"></td>
+                <td class="col-points">0</td>
+            </tr>
+            <tr class="player-row">
+                <td class="pos">8</td>
+                <td class="nome">Procchi</td>
+                <td><input type="number" value="0" class="win" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="draw" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="loss" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="quit" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="table" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="match"></td>
+                <td class="col-points">0</td>
+            </tr>
+            <tr class="player-row">
+                <td class="pos">9</td>
+                <td class="nome">Scalise</td>
+                <td><input type="number" value="0" class="win" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="draw" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="loss" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="quit" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="table" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="match"></td>
+                <td class="col-points">0</td>
+            </tr>
+            <tr class="player-row">
+                <td class="pos">10</td>
+                <td class="nome">Targa</td>
+                <td><input type="number" value="0" class="win" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="draw" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="loss" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="quit" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="table" onchange="updateScores()"></td>
+                <td><input type="number" value="0" class="match"></td>
+                <td class="col-points">0</td>
+            </tr>
+            
+             
+            </tbody>
+        </table>
+    </div>
+</button>
+    <h2>2. Tabellone Ottavi di Finale</h2>
+    
+    
+    <div class="bracket-container">
+        
+        <div class="round">
+            <div class="round-title">Ottavi</div>
+            <div class="match-box"><input type="text" placeholder="1A"><input type="text" placeholder="1B"></div>
+            <div class="match-box"><input type="text" placeholder="2A"><input type="text" placeholder="2B"></div>
+            <div class="match-box"><input type="text" placeholder="3A"><input type="text" placeholder="3B"></div>
+            <div class="match-box"><input type="text" placeholder="4A"><input type="text" placeholder="4B"></div>
+            <div class="match-box"><input type="text" placeholder="5A"><input type="text" placeholder="5B"></div>
+            <div class="match-box"><input type="text" placeholder="6A"><input type="text" placeholder="6B"></div>
+            <div class="match-box"><input type="text" placeholder="7A"><input type="text" placeholder="7B"></div>
+            <div class="match-box"><input type="text" placeholder="8A"><input type="text" placeholder="8B"></div>
+        </div>
+
+        <div class="connector">➔</div>
+
+        <div class="round">
+            <div class="round-title">Quarti</div>
+            <div class="match-box"><input type="text" placeholder="Vinc. 1"><input type="text" placeholder="Vinc. 2"></div>
+            <div class="match-box"><input type="text" placeholder="Vinc. 3"><input type="text" placeholder="Vinc. 4"></div>
+            <div class="match-box"><input type="text" placeholder="Vinc. 5"><input type="text" placeholder="Vinc. 6"></div>
+            <div class="match-box"><input type="text" placeholder="Vinc. 7"><input type="text" placeholder="Vinc. 8"></div>
+        </div>
+
+        <div class="connector">➔</div>
+
+        <div class="round">
+            <div class="round-title">Semifinali</div>
+            <div class="match-box"><input type="text" placeholder="Vinc. Q1"><input type="text" placeholder="Vinc. Q2"></div>
+            <div class="match-box"><input type="text" placeholder="Vinc. Q3"><input type="text" placeholder="Vinc. Q4"></div>
+        </div>
+
+        <div class="connector">➔</div>
+
+        <div class="round">
+            <div class="round-title">Finale</div>
+            <div class="match-box">
+                <input type="text" placeholder="Finalista 1">
+                <input type="text" placeholder="Finalista 2">
+            </div>
+        </div>
+
+        <div class="connector">➔</div>
+
+        <div class="round">
+            <div class="round-title">Champion</div>
+            <div class="winner-box">
+                <input type="text" placeholder="👑 VINCITORE">
+            </div>
+        </div>
+    </div>
+   <button onclick="salvaTutto()" style="padding: 10px 20px; background: #db9c14; border: none; border-radius: 5px; cursor: pointer; color: black; font-weight: bold; margin: 20px;">
+    💾 SALVA STATO TORNEO
+</button>
+    <script>
+// 1. CONFIGURAZIONE (Lascia le tue credenziali qui)
+const SUPABASE_URL = "https://hedihazknndsxiciseuo.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhlZGloYXprbm5kc3hpY2lzZXVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQ2MTIsImV4cCI6MjA4NzQ1MDYxMn0.b6pmrHcLTVuVXIvGuT5X1SxxK10oeX-XoOra00WFYQY";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// 2. FUNZIONE PER CALCOLARE I PUNTI (La tua originale, migliorata)
+function updateScores() {
+    const rows = Array.from(document.querySelectorAll('.player-row'));
+    rows.forEach(row => {
+        const wins = parseInt(row.querySelector('.win').value) || 0;
+        const draws = parseInt(row.querySelector('.draw').value) || 0;
+        const quits = parseInt(row.querySelector('.quit').value) || 0;
+        const tables = parseInt(row.querySelector('.table').value) || 0;
+        const points = (wins * 3) + (draws * 1) + (tables * 2) - (quits * 1);
+        row.querySelector('.col-points').innerText = points;
+    });
+
+    const tbody = document.getElementById('tableBody');
+    rows.sort((a, b) => parseInt(b.querySelector('.col-points').innerText) - parseInt(a.querySelector('.col-points').innerText));
+    rows.forEach((row, index) => {
+        row.querySelector('.pos').innerText = index + 1;
+        tbody.appendChild(row);
+    });
+}
+
+async function salvaTutto() {
+            const classifica = [];
+            document.querySelectorAll('.player-row').forEach(row => {
+                classifica.push({ n: row.querySelector('.nome').innerText, w: row.querySelector('.win').value, d: row.querySelector('.draw').value, l: row.querySelector('.loss').value });
+            });
+
+            const tabellone = [];
+            document.querySelectorAll('.bracket-container input').forEach((input, i) => {
+                tabellone.push({ id: i, v: input.value });
+            });
+
+            const { error } = await sb.from('note').insert([{ contenuto: JSON.stringify({ classifica, tabellone }) }]);
+            if (error) alert("Errore: " + error.message);
+            else alert("Torneo salvato con successo! 🏆");
+        }
+
+        async function caricaDati() {
+            const { data, error } = await sb.from('note').select('contenuto').order('id', { ascending: false }).limit(1);
+            if (data && data.length > 0) {
+                const d = JSON.parse(data[0].contenuto);
+                if (d.classifica) {
+                    d.classifica.forEach(item => {
+                        const riga = Array.from(document.querySelectorAll('.player-row')).find(r => r.querySelector('.nome').innerText === item.n);
+                        if (riga) { riga.querySelector('.win').value = item.w; riga.querySelector('.draw').value = item.d; riga.querySelector('.loss').value = item.l; }
+                    });
+                }
+                if (d.tabellone) {
+                    const inputs = document.querySelectorAll('.bracket-container input');
+                    d.tabellone.forEach(item => { if (inputs[item.id]) inputs[item.id].value = item.v; });
+                }
+                updateScores();
+            }
+        }
+
+        window.onload = caricaDati;
+    </script>
+</body>
+</html>
