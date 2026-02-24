@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronometro D-scherm</title>
+    
+    <style>
+        body {
+            background-color: #050505;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family:  sans-serif;
+            color: white;
+        }
+
+        /* --- STILE ANALOGICO --- */
+        .clock {
+            width: 500px;
+            height: 500px;
+            border: 6px solid #1a1a1a;
+            border-radius: 50%;
+            position: relative;
+            background: radial-gradient(circle, #111 0%, #050505 100%);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .clock::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #00ff88;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            transform: translateX(-50%) rotate(0deg);
+            border-radius: 5px;
+        }
+
+        .second-hand {
+            width: 2px;
+            height: 230px;
+            background: #00ff88;
+            z-index: 5;
+        }
+
+        .minute-hand {
+            width: 5px;
+            height: 200px;
+            background: #fff;
+            z-index: 4;
+        }
+
+        .marking {
+            position: absolute;
+            width: 2px;
+            height: 15px;
+            background: #00ff88; 
+            left: 50%;
+            transform-origin: 0 250px;
+        }
+
+        /* --- STILE DIGITALE --- */
+        .stopwatch-container {
+            background-color: #1a1a1a;
+            padding: 20px 40px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+
+        #display {
+            font-variant-numeric: tabular-nums;
+            font-size: 3rem;
+            color: #00ff88;
+            margin-bottom: 20px;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-family: sans-serif;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+
+        #startStop { background-color: #00ff88 ; color: #121212; }
+        #reset { background-color: #333; color: #ccc; }
+        
+        /* Stato quando corre */
+        .running #startStop { background-color: #ff3e3e; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="clock" id="clock">
+        <div class="hand minute-hand" id="min-hand"></div>
+        <div class="hand second-hand" id="sec-hand"></div>
+    </div>
+
+    <div class="stopwatch-container" id="container">
+        <div id="display">00:00:00</div>
+        <div class="controls">
+            <button id="startStop" onclick="toggle()">Avvia</button>
+            <button id="reset" onclick="reset()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        // Generazione tacche rosse
+        const clock = document.getElementById('clock');
+        for (let i = 0; i < 60; i++) {
+            const marking = document.createElement('div');
+            marking.classList.add('marking');
+            marking.style.transform = `rotate(${i * 6}deg)`;
+            if (i % 5 !== 0) marking.style.opacity = "0.3"; 
+            clock.appendChild(marking);
+        }
+
+        let startTime, elapsedTime = 0, timerInterval;
+        const display = document.getElementById("display");
+        const btnStart = document.getElementById("startStop");
+        const container = document.getElementById("container");
+        const secHand = document.getElementById('sec-hand');
+        const minHand = document.getElementById('min-hand');
+
+        function update() {
+            elapsedTime = Date.now() - startTime;
+            
+            // Logica Digitale
+            let mm = Math.floor(elapsedTime / 60000);
+            let ss = Math.floor((elapsedTime % 60000) / 1000);
+            let ms = Math.floor((elapsedTime % 1000) / 10);
+            display.innerHTML = `${mm.toString().padStart(2,"0")}:${ss.toString().padStart(2,"0")}:${ms.toString().padStart(2,"0")}`;
+
+            // Logica Analogica (Gradi)
+            const sDegrees = (elapsedTime / 1000) * 6;
+            const mDegrees = (elapsedTime / 60000) * 6;
+            secHand.style.transform = `translateX(-50%) rotate(${sDegrees}deg)`;
+            minHand.style.transform = `translateX(-50%) rotate(${mDegrees}deg)`;
+        }
+
+        function toggle() {
+            if (!timerInterval) {
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(update, 10);
+                btnStart.innerHTML = "Pausa";
+                container.classList.add("running");
+            } else {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                btnStart.innerHTML = "Avvia";
+                container.classList.remove("running");
+            }
+        }
+
+        function reset() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            elapsedTime = 0;
+            display.innerHTML = "00:00:00";
+            secHand.style.transform = `translateX(-50%) rotate(0deg)`;
+            minHand.style.transform = `translateX(-50%) rotate(0deg)`;
+            btnStart.innerHTML = "Avvia";
+            container.classList.remove("running");
+        }
+    </script>
+</body>
+</html>
