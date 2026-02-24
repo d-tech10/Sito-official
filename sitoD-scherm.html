@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="it">
+<title>D-scherm official website</title>
+<head>
+  <h1>D-SCHERM</h1>
+</head>
+<body> 
+  <style>
+       h1{
+          font-family: 'Orbitron', sans-serif;
+          color: white;
+          font-weight: thin;
+          height: 50px;
+          position: center;
+          }
+          
+            
+        * { margin: 0; padding: 0; box-sizing: border-box; background-color: #808080}
+
+        /* Contenitore a tutta pagina */
+        .wrapper {
+            display: flex;
+            height: 90vh;
+            width: 100%;
+            overflow: hidden;
+            background: #000;
+        }
+
+        /* Singolo Rettangolo */
+        .box{
+            flex: 1;
+            position: relative;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: flex 0.7s cubic-bezier(0.2, 1, 0.3, 1); /* Movimento fluido stile luxury */
+            background-size: cover;
+            background-position: center;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Effetto di espansione al passaggio del mouse */
+        .box:hover {
+            flex: 2;
+        }
+
+        /* Immagini di sfondo (Sostituisci i link con le tue foto) */
+        .box-1 { background-image:url('https://t3.ftcdn.net/jpg/14/82/37/20/360_F_1482372061_ALR6sJBIj6hgsiCYgO94uO1hRNat2ZaJ.jpg') }
+        
+        .box-2 { background-image: url('https://img.pikbest.com/wp/202347/stopwatches-stopwatch-in-3d_9742822.jpg!w700wp'),linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)); }
+        
+        .box-3 { background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('logogame.png'); }
+
+        /* Stile Testo */
+        .box h2 {
+            border: none;
+            background-color: transparent;
+            font-family: sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-size: 1.5rem;
+            font-weight: 300;
+        }
+    </style>
+
+    <div class="wrapper">
+       <a href="https://d-tech10.github.io/Sito-official/" class="box box-1">
+            <h2>Classifiche</h2>
+        </a>
+        <a href="https://d-tech10.github.io/Sito-official/cronometro.html" class="box box-2">
+            <h2>Cronometro</h2>
+        </a>
+
+        <a href="https://subtle-pixel-fight-club.base44.app/login?from_url=https%3A%2F%2Fsubtle-pixel-fight-club.base44.app%2F" class="box box-3">
+            <h2>Official videogame</h2>
+        </a>
+    </div>
+   
+</body>
+</html>
